@@ -17,7 +17,7 @@
        under the License.
  */
 
-package com.rushikesh9.hackon;
+package com.rushikesh99.hackon;
 
 import android.os.Bundle;
 import org.apache.cordova.*;

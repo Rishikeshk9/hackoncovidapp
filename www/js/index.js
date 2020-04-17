@@ -54,19 +54,40 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     zoomOffset: -1,
     accessToken: 'pk.eyJ1IjoicmlzaGlrZXNoazkiLCJhIjoiY2s4dWFtMzhkMDJvYTNtcDM2dnI1ZWxoNSJ9.iDACWKNRrGfnRlw93f9cEQ'
 }).addTo(map);
+
+
+
+map.on('locationfound', onLocationFound);
+map.on('locationerror', onLocationError);
+map.locate({setView: true, maxZoom: 16});
+
+window.setInterval(function(){ 
+ map.locate();
+
+
+  }, 30000);
+  var themarker = {}    
+  var thecircle = {}  
 function onLocationFound(e) {
     var radius = e.accuracy / 2;
+    
 
-    L.marker(e.latlng).addTo(map)
-        .bindPopup("You are within " + radius + " meters from this point" + e.latlng).openPopup();
+    if (themarker != undefined) {
+        map.removeLayer(themarker);
+        map.removeLayer(thecircle);
+  };
 
 
-    L.circle(e.latlng, radius).addTo(map);
+    themarker = L.marker(e.latlng).addTo(map)
+        .bindPopup("You are within " + radius + " meters from this point" + e.latlng);
 
-    var lat = 18.659257;
+    
+    thecircle =  L.circle(e.latlng, radius).addTo(map);
+
+    /*var lat = 18.659257;
             var lng = 73.777220;
             L.marker([parseFloat(lat),parseFloat(lng)]).addTo(map).bindPopup("Your Friend  is Here" );
-            L.circle([parseFloat(lat),parseFloat(lng)], 50).addTo(map);
+            L.circle([parseFloat(lat),parseFloat(lng)], 50).addTo(map);*/
      upload(e);
 }
 
@@ -87,10 +108,8 @@ function getLocation() {
      });
  }
 
-map.on('locationfound', onLocationFound);
-map.on('locationerror', onLocationError);
 
-map.locate({setView: true, maxZoom: 16});
+
  
 
 $("#but_select").click(function () {
@@ -196,14 +215,14 @@ function onSuccess2(imageURI) {
 function onFail2(message) {
 alert('Failed because: ' + message);
 }
- 
+var d = window.localStorage;
 function upload(e){
-    
-  
+    var id = d.getItem("ID");
+
     $.ajax({
         type: 'POST',
-        data: {lng: e.latlng.lng, lat: e.latlng.lat},
-        url: 'https://demorushi.000webhostapp.com/locate.php',
+        data: {lon: e.latlng.lng, lat: e.latlng.lat,userID: id},
+        url: 'http://192.168.0.103:8000/updateloc/',
         success: function(data){
             console.log(data);
             //alert('Your Location was successfully added');
@@ -218,7 +237,7 @@ function upload(e){
  
     return false;
 }
- 
+
 function findFriends(){
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
     const url = "https://example.com"; // site that doesn’t send Access-Control-*
@@ -290,3 +309,27 @@ function updateData()
         
 
 }
+
+$("#mainForm").submit(function(event) {
+
+    /* stop form from submitting normally */
+    event.preventDefault();
+
+    /* get the action attribute from the <form action=""> element */
+    var $form = $( this ),
+        url = $form.attr( 'action' );
+
+  
+        $.ajax({
+            url:url,
+            type:'POST',
+            data:$(this).serialize(),
+            success:function(result){
+                alert(result);
+
+            }
+
+    });
+  });
+
+ 

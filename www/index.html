@@ -46,7 +46,7 @@
         <link href="./css/material-kit.min.css" rel="stylesheet">
          
                    <!-- modernizer -->
-
+                   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
         <script type="text/javascript" src="cordova.js"></script>
         <script src="https://simeydotme.github.io/jQuery-ui-Slider-Pips/dist/js/modernizr.min.js"></script>
         
@@ -74,7 +74,7 @@
             <header>
             <!--Navbar -->
             <nav class="mb-1 navbar fixed-top navbar-expand-lg navbar-dark black lighten-1">
-                <a class="navbar-brand ml-5"  >Supersapiens</a>
+                <a class="navbar-brand ml-5"  >CovidCare</a>
          
                 <button class="navbar-toggler" type="button" data-target="#navbarSupportedContent-555" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -91,14 +91,12 @@
                     </a>
                     </li>
                     <li class="nav-item">
-                     <a class="nav-link" href="friends.html">UPLOAD</a>
+                     <a class="nav-link" href="friends.html">Neighbourhood</a>
                        
                     </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="#">DOWNLOAD </a>
-                    </li>
+                    
                 </ul>
-                <ul class="navbar-nav ml-auto nav-flex-icons">
+                <ul class="navbar-nav ml-auto nav-flex-icons d-none">
                     <li class="nav-item avatar">
                     <a class="nav-link p-0" href="#">
                         <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" class="rounded-circle z-depth-0"
@@ -112,12 +110,14 @@
             </header>
             <!--/.Double navigation-->
         
-            <form class="card" action="http://192.168.0.103:8000/create/" method="POST">
-            <div class="container my-3">
-                <h3 class="text-center">Personna</h3>
+            <form id="mainForm" class="card" action="http://192.168.0.103:8000/create/" method="POST">
+            <div class="container my-3 mt-5 pt-3">
+                 
                   <!--Card-->
                   <div class="card">
-    
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Personna</h4>
+                     </div>
                     <div class="form-row p-4">
                     
                         <div class="col-12">
@@ -137,10 +137,11 @@
             </div>    
            
         <div class="container my-3">
-            <h3 class="text-center">Symptoms</h3>
-              <!--Card-->
+               <!--Card-->
             <div class="card">
-
+                <div class="card-header card-header-primary">
+                    <h4 class="card-title">Symptoms</h4>
+                 </div>
                 <div class="row">
                 
                    
@@ -225,10 +226,11 @@
         </div>
 
         <div class="container my-3">
-            <h3 class="text-center">Travel History</h3>
-              <!--Card-->
+               <!--Card-->
             <div class="card">
-
+                <div class="card-header card-header-primary">
+                    <h4 class="card-title">Travel History</h4>
+                 </div>
                 <div class="row">
                 
                     <div class="col-6  text-center" >
@@ -281,11 +283,12 @@
         
 
         <div class="container my-3">
-            <h3 class="text-center">Medical Records</h3>
-              <!--Card-->
-            <div class="card p-4">
-
-                <div class="form-row ">
+               <!--Card-->
+            <div class="card p-4 text-center">
+                <div class="card-header card-header-primary">
+                    <h4 class="card-title">Medical Records</h4>
+                 </div>
+                <div class="form-row m-4">
                 
                     <div class="form-group">
                         <label for="exampleFormControlFile1">X-Ray Scan</label>                    

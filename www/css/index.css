@@ -452,3 +452,9 @@ h1 {
                     transform: scale(.9);
                 }
             }          
+
+
+
+.card-title{
+  font-family: 'Poppins', sans-serif!important;
+}            
