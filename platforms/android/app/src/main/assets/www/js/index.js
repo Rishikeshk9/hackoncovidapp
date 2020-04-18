@@ -28,6 +28,19 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
+
+        navigator.contactsPhoneNumbers.list(function(contacts) {
+            console.log(contacts.length + ' contacts found');
+            for(var i = 0; i < contacts.length; i++) {
+               console.log(contacts[i].id + " - " + contacts[i].displayName);
+               for(var j = 0; j < contacts[i].phoneNumbers.length; j++) {
+                  var phone = contacts[i].phoneNumbers[j];
+                  console.log("===> " + phone.type + "  " + phone.number + " (" + phone.normalizedNumber+ ")");
+               }
+            }
+         }, function(error) {
+            console.error(error);
+         });
     },
 
     // Update DOM on a Received Event
@@ -44,8 +57,17 @@ var app = {
 };
 
 app.initialize();
-
-var map = L.map('mapid').setView([51.505, -0.09], 13);
+var d = window.localStorage;
+if(d.getItem("ID")!=null)
+{
+    document.getElementById("mainForm").style.display = "none";
+    document.getElementById("mapid").style.display = "block";
+}
+else{
+    document.getElementById("mainForm").style.display = "block";
+document.getElementById("mapid").style.display = "none";
+}
+var map = L.map('mapid').setView([0, 0], 5);
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmlzaGlrZXNoazkiLCJhIjoiY2s4dWFtMzhkMDJvYTNtcDM2dnI1ZWxoNSJ9.iDACWKNRrGfnRlw93f9cEQ', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
@@ -55,33 +77,356 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: 'pk.eyJ1IjoicmlzaGlrZXNoazkiLCJhIjoiY2s4dWFtMzhkMDJvYTNtcDM2dnI1ZWxoNSJ9.iDACWKNRrGfnRlw93f9cEQ'
 }).addTo(map);
 
+
 map.on('locationfound', onLocationFound);
 map.on('locationerror', onLocationError);
-map.locate({setView: true, maxZoom: 16});
 
+var iv = parseFloat(d.getItem("IV"));
+ 
+var id = d.getItem("ID"); 
+
+var markers = [];
+
+var redCircleMarkers = [];
+ 
+var themarker  = L.marker([0,0]).addTo(map); 
+var theRedcircle = L.circle([0,0], {
+    color: '#E74C3C',
+    fillColor: '#E74C3C',
+    fillOpacity: 0.2,
+    radius: 50
+}).addTo(map);
+
+var theRedcircle2 = L.circle([0,0], {
+    color: '#E74C3C',
+    fillColor: '#E74C3C',
+    fillOpacity: 0.2,
+    radius: 600
+}).addTo(map);
+
+var theorangecircle = L.circle([0,0], {
+    color: '#FFB600',
+    fillColor: '#FFB600',
+    fillOpacity: 0.2,
+    radius: 50
+}).addTo(map);
+ 
+var theGreencircle =  L.circle([0,0], {
+    color: '#78C61E',
+    fillColor: '#78C61E',
+    fillOpacity: 0.2,
+    radius: 50
+}).addTo(map);
+
+var myLat;
+var myLon;
+
+if(d.getItem("ID")!=null)
+{ 
+    map.locate({setView: true, maxZoom: 16});
+
+updateFriendCount();
+
+updateFriend();
+getRedZones();
+setInterval(updateFriendCount(),30000) 
 window.setInterval(function(){ 
- map.locate({setView: true, maxZoom: 16});
+    map.locate();
+    updateFriend();
+    getRedZones();
+     }, 30000);
+}   
+
+  function updateFriend()
+  {
+    var d = window.localStorage;
+    
+    //location.reload();
+
+    url = "http://rushikeshk9.pythonanywhere.com/friendloc/"
+
+    var d = window.localStorage;
+
+        $.ajax({
+            url:url,
+            type:'POST',
+            data:{userID: id},
+            success:function(result){
+                 var str_array = result.split(',');
+                var frndId = [];
+                var lat = [];
+                var lon = []; 
+                var infectionVar = [];  
+              
+                 for(var i = 0; i < str_array.length; i++) {
+                     
+                    if ((i+1)%4 == 2) //second Element
+                        {
+                            
+                            lat.push(str_array[i]);
+                              
+                        }
+                        if((i+1)%4==3){ //Frst Element
+
+                            lon.push(str_array[i]); 
+                        }
+                        if((i+1)%4==1){ //Third Element
+                            frndId.push(str_array[i]);                           
+
+                        }  
+
+                        if((i+1)%4==0){ //Fourth Element
+                            
+                            infectionVar.push(str_array[i]); 
+
+                        }  
+                        
+                }  
+
+                  for(i=0;i<(frndId.length);i++){
+                    var latt = lat[i];
+                    var lng = lon[i];
+                    var iv = infectionVar[i]; 
+
+                    var dst = distance(myLat,myLon,parseFloat(latt),parseFloat(lng)); 
+                     
+                        iv= parseFloat(iv);
+                          if(iv>=0.8){  
+                            markers[i].setLatLng([parseFloat(latt),parseFloat(lng)]).bindPopup("Your Friend "+frndId[i]+" is Here with IV:"+iv.toFixed(2)+" Approx Distance : "+dst.toFixed(2)+" Kms"  );
+                            markers[i].setIcon(redFrndIcon);
+                            markers[i].addTo(map);
+                             
+
+                        }
+                        
+                        if (iv>=0.37){
+                            
+                            if (iv<0.8) { 
+                                markers[i].setLatLng([parseFloat(latt),parseFloat(lng)]).bindPopup("Your Friend "+frndId[i]+" is Here with IV:"+iv.toFixed(2)+" Approx Distance : "+dst.toFixed(2)+" Kms"  );
+                                markers[i].setIcon(orangeFrndIcon);
+                                markers[i].addTo(map);
+
+                            }
+                        }
+                        if(iv<0.37){
+                            markers[i].setLatLng([parseFloat(latt),parseFloat(lng)]).bindPopup("Your Friend "+frndId[i]+" is Here with IV:"+iv.toFixed(2)+" Approx Distance : "+dst.toFixed(2)+" Kms" );
+                            markers[i].setIcon(greenFrndIcon);
+                            markers[i].addTo(map);
+                            
+                        } 
+                 } 
+ 
+                console.log("Frnd ID: "+frndId);
+                
+                console.log("Lat ID: "+lat);
+                
+                console.log("Lon ID: "+lon);
+                
+                console.log("IV : "+infectionVar);
+            }
+
+    });
+  }
+
+  
+  function updateFriendCount()
+  {
+    var d = window.localStorage;
+    
+    //location.reload();
+
+    url = "http://rushikeshk9.pythonanywhere.com/friendloc/"
+
+    var d = window.localStorage;
+
+        $.ajax({
+            url:url,
+            type:'POST',
+            data:{userID: id},
+            success:function(result){ 
+                var frndId = [];  
+                var str_array = result.split(',');
+
+                for(var i = 0; i < str_array.length; i++) {
+                if((i+1)%4==1){ //Third Element
+                    frndId.push(str_array[i]);                           
+
+                }  
+            }
+
+                markers = [];
+                
 
 
-  }, 30000);
-  var themarker = {}    
-  var thecircle = {}  
+                for(i=0;i<(frndId.length);i++){  
+                    var theFrndMarker = L.marker([0,0]);
+                   markers.push(theFrndMarker);   
+                   console.log(markers.length);
+
+                 } 
+
+                 
+                 
+            }
+        });
+
+
+
+        url2 = "http://rushikeshk9.pythonanywhere.com/redzone/"
+
+
+            $.ajax({
+                url:url2,
+                type:'POST',
+                data:{userID: id},
+                success:function(result){ 
+                    var zoneIv = [];  
+                    var str_array = result.split(',');
+    
+                    for(var i = 0; i < str_array.length; i++) {
+                    if((i+1)%3==0){ //Third Element
+                        zoneIv.push(str_array[i]);                           
+    
+                    }  
+                }
+    
+                   
+                redCircleMarkers = [];
+
+                    for(i=0;i<(zoneIv.length);i++){  
+                    var theRedCircleMarker = L.circle([0,0], {
+                        color: '#E74C3C',
+                        fillColor: '#E74C3C',
+                        fillOpacity: 0.05,
+                        radius: 1500,
+                        stroke:false
+                    });
+                    
+                    
+                    redCircleMarkers.push(theRedCircleMarker);   
+                    console.log(redCircleMarkers.length);
+        
+                        
+        
+                    }
+                }
+            });
+    
+  }
+
+  function getRedZones(){
+
+
+
+    var d = window.localStorage;
+    
+    //location.reload();
+
+    url = "http://rushikeshk9.pythonanywhere.com/redzone/"
+
+    var d = window.localStorage;
+
+        $.ajax({
+            url:url,
+            type:'POST',
+            data:{userID: id},
+            success:function(result){ 
+
+
+                
+                var str_array = result.split(',');
+                var lat = [];
+                var lon = []; 
+                 
+              
+                 for(var i = 0; i < str_array.length; i++) {
+                     
+                    if ((i+1)%3 == 1) //Frst Element
+                        {
+                            
+                            lat.push(str_array[i]);
+                              
+                        }
+                        if((i+1)%3==2){ //second Element
+
+                            lon.push(str_array[i]); 
+                        }
+                        
+                        
+                }  
+                
+                console.log("REDZONE CIRCLE ");
+                console.log("Lat ID: "+lat);
+                
+                console.log("Lon ID: "+lon);
+              
+
+                  for(i=0;i<(lat.length-1);i++){
+                    var latt = lat[i];
+                    var lng = lon[i];  
+
+                    
+                    redCircleMarkers[i].setLatLng([parseFloat(latt),parseFloat(lng)]);
+                     
+                    redCircleMarkers[i].addTo(map);
+
+                } 
+                
+ 
+            }
+
+    });
+  }
+   
+  
 function onLocationFound(e) {
-    var radius = e.accuracy / 2;
+    var radiuss = e.accuracy / 2;
+    myLat = e.latlng.lat;
+    myLon = e.latlng.lng; 
     
+  
+    iv = parseFloat(d.getItem("IV"));
+    if(iv>=0.8){
+        themarker.setIcon(redIcon);
 
-    if (themarker != undefined) {
-        map.removeLayer(themarker);
-        map.removeLayer(thecircle);
-  };
+        themarker.setLatLng(e.latlng);
 
-
-    themarker = L.marker(e.latlng).addTo(map)
-        .bindPopup("You are within " + radius + " meters from this point" + e.latlng);
+        themarker.bindPopup("You seem to be Positive. Location Accuracy " + radiuss + " meters" );    
+        theRedcircle.setLatLng(e.latlng);
+        theRedcircle.setRadius(radiuss);
+         
 
     
-    thecircle =  L.circle(e.latlng, radius).addTo(map);
+    }
+     
+    if (iv>=0.37){
+        
+        if (iv<0.8) { 
+            themarker.setIcon(orangeIcon);
 
+            themarker.setLatLng(e.latlng);
+            themarker.bindPopup("You seem to be Suspicious. Location Accuracy " + radiuss + " meters" );    
+                
+            theorangecircle.setLatLng(e.latlng);
+            theorangecircle.setRadius(radiuss);
+    
+        }
+    }
+    if(iv<0.37){
+        themarker.setIcon(greenIcon);
+
+        themarker.setLatLng(e.latlng);
+
+        themarker.bindPopup("You seem to be Safe. Location Accuracy " + radiuss + " meters" );
+ 
+        theGreencircle.setLatLng(e.latlng);
+            theGreencircle.setRadius(radiuss);
+    
+    }
+
+   
+    
+    
     /*var lat = 18.659257;
             var lng = 73.777220;
             L.marker([parseFloat(lat),parseFloat(lng)]).addTo(map).bindPopup("Your Friend  is Here" );
@@ -107,8 +452,10 @@ function getLocation() {
  }
 
 
+$("#viewf").click(function(){
+    document.getElementById("mainForm").style.display = "block";
 
- 
+})
 
 $("#but_select").click(function () {
     document.getElementById("loader").style.display = "block";
@@ -220,9 +567,9 @@ function upload(e){
     $.ajax({
         type: 'POST',
         data: {lon: e.latlng.lng, lat: e.latlng.lat,userID: id},
-        url: 'http://192.168.0.103:8000/updateloc/',
+        url: 'http://rushikeshk9.pythonanywhere.com/updateloc/',
         success: function(data){
-            console.log(data);
+             
             //alert('Your Location was successfully added');
             //findFriends();
             
@@ -242,7 +589,7 @@ function findFriends(){
     fetch(proxyurl+url) 
     $.getJSON(proxyurl+url, function(data) {
     //data is the JSON string
-    L.marker([data.lng+5,data.lat+5]).addTo(map);
+    L.marker([data.lng+5,data.lat+5],{icon: redIcon}).addTo(map);
 }); 
 }
 
@@ -250,42 +597,41 @@ function findFriends(){
 $.extend( $.ui.slider.prototype.options, { 
     animate: 300
 });
+var slider = document.getElementById("myRange");
+var slider2 = document.getElementById("myRange2");
+var output = document.getElementById("demo");
+var output2 = document.getElementById("demo2");
+output.innerHTML = slider.value; // Display the default slider value
+output2.innerHTML = slider2.value; // Display the default slider value
+output.innerHTML="No Cough";
+output2.innerHTML="No Breathlessness";
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+    if (this.value==1) {
+        output.innerHTML="No Cough";
+    }
+    else if(this.value==2){
+        output.innerHTML="Normal Cough";
+    }
+    else{
+        output.innerHTML="Heavy Cough";
+    }
+  
 
-$(".slider")
-    .slider({
-        max: 106,
-        min: 97.7,
-        range: "min", 
-        
-        step: 0.1,
-    })
-    .slider("pips", {
-        first: "pip",
-        last: "pip", 
-        step: 1,
-    })
-    .slider("float");
 
+}
 
-    
-$(".slider2")
-.slider({
-    max: 3,
-    min: 1,
-    range: "min",
-     
-})
-.slider("pips", {
-    first: "pip",
-    last: "pip",
-    
-})
-.slider("float", {
-    labels:[ "LOW", "MED", "HIGH"],
-});
-
- 
-
+slider2.oninput = function() {
+    if (this.value==1) {
+        output2.innerHTML="No Breathlessness";
+    }
+    else if(this.value==2){
+        output2.innerHTML="Normal Breathlessness";
+    }
+    else{
+        output2.innerHTML="Heavy Breathlessness";
+    }
+  }
 // jQuery v3.3.1 is supported
 $("#slider").roundSlider({
 	radius: 72,
@@ -309,8 +655,7 @@ function updateData()
 }
 
 $("#mainForm").submit(function(event) {
-
-    /* stop form from submitting normally */
+     /* stop form from submitting normally */
     event.preventDefault();
 
     /* get the action attribute from the <form action=""> element */
@@ -323,7 +668,14 @@ $("#mainForm").submit(function(event) {
             type:'POST',
             data:$(this).serialize(),
             success:function(result){
-                alert(result);
+               
+
+               var str_array = result.split(',');
+               d.setItem("IV",str_array[0]);
+               d.setItem("ID",str_array[1]);
+
+                  alert(result);
+                 location.reload();
 
             }
 
@@ -331,3 +683,98 @@ $("#mainForm").submit(function(event) {
   });
 
  
+
+ var greenIcon = L.icon({
+    iconUrl: './img/markers/green.png',
+    shadowUrl: './img/markers/shadow.png',
+
+    iconSize:     [38, 60], // size of the icon
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [19, 60], // point of the icon which will correspond to marker's location
+     shadowAnchor: [24, 60],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
+
+
+var orangeIcon = L.icon({
+    iconUrl: './img/markers/yellow.png',
+    shadowUrl: './img/markers/shadow.png',
+
+    iconSize:     [38, 60], // size of the icon
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [19, 60], // point of the icon which will correspond to marker's location
+     shadowAnchor: [24, 60],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
+
+var redIcon = L.icon({
+    iconUrl: './img/markers/red.png',
+    shadowUrl: './img/markers/shadow.png',
+
+    iconSize:     [38, 60], // size of the icon
+     shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [19, 60], // point of the icon which will correspond to marker's location
+     shadowAnchor: [24, 60],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    
+});
+
+
+
+
+var greenFrndIcon = L.icon({
+    iconUrl: './img/markers/green-frnd.png',
+    shadowUrl: './img/markers/shadow.png',
+
+    iconSize:     [28, 55], // size of the icon
+    shadowSize:   [28, 60], // size of the shadow
+    iconAnchor:   [19, 55], // point of the icon which will correspond to marker's location
+    shadowAnchor: [19, 55],  // the same for the shadow
+     popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
+
+
+var orangeFrndIcon = L.icon({
+    iconUrl: './img/markers/yellow-frnd.png',
+    shadowUrl: './img/markers/shadow.png',
+
+    iconSize:     [28, 55], // size of the icon
+    shadowSize:   [28, 60], // size of the shadow
+    iconAnchor:   [19, 55], // point of the icon which will correspond to marker's location
+    shadowAnchor: [19, 55],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
+
+var redFrndIcon = L.icon({
+    iconUrl: './img/markers/red-frnd.png',
+    shadowUrl: './img/markers/shadow.png',
+
+    iconSize:     [28, 55], // size of the icon
+    shadowSize:   [28, 60], // size of the shadow
+    iconAnchor:   [19, 55], // point of the icon which will correspond to marker's location
+    shadowAnchor: [19, 55],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    
+});
+ 
+
+function distance(lat1, lon1, lat2, lon2) {
+	if ((lat1 == lat2) && (lon1 == lon2)) {
+		return 0;
+	}
+	else {
+		var radlat1 = Math.PI * lat1/180;
+		var radlat2 = Math.PI * lat2/180;
+		var theta = lon1-lon2;
+		var radtheta = Math.PI * theta/180;
+		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		if (dist > 1) {
+			dist = 1;
+		}
+		dist = Math.acos(dist);
+		dist = dist * 180/Math.PI;
+        dist = dist * 60 * 1.1515;  
+        dist = dist * 1.609344  
+		return dist;
+    }
+}

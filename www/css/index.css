@@ -19,7 +19,10 @@
 * {
     -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
-
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 body {
     -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
     -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
@@ -361,7 +364,7 @@ h1 {
               font-size: 2rem;
               line-height: 12px;
               padding: 3px 0 0 7px;
-                color: #ecc71f;
+                color: #ffd723;
             }
             .room {
               position: absolute;
@@ -419,7 +422,7 @@ h1 {
                 color: #ecc71f;
                 font-weight: 400;
                 top: 65%;
-                height: 3.5rem;
+                height: 4rem;
                 padding: 0 !important;
                 width: 4.5rem;
             }
@@ -458,3 +461,53 @@ h1 {
 .card-title{
   font-family: 'Poppins', sans-serif!important;
 }            
+
+
+
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+  border-radius: 50%;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+   
+  border-radius: 50%;
+  width: 40px; /* Set a specific slider handle width */
+  height: 40px; /* Slider handle height */
+  background:purple; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+  filter: drop-shadow(0 1mm 1mm rgba(15, 15, 15, 0.4));
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #4CAF50; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.result-btn{
+  width: 80%;
+  margin: auto ;
+}

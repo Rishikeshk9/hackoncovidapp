@@ -18,6 +18,9 @@
     <feature name="CordovaPluginsCleartext">
         <param name="android-package" value="cordova.plugins.cleartext" />
     </feature>
+    <feature name="ContactsPhoneNumbers">
+        <param name="android-package" value="com.dbaq.cordova.contactsPhoneNumbers.ContactsManager" />
+    </feature>
     <name>CovidCare - Team Supersapiens</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.

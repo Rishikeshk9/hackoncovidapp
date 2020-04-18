@@ -32,16 +32,18 @@ $("#addid").click(function(event){
     var id;
     id = document.getElementById("userID").value;
     d.setItem("ID",id);
-    location.reload();
+    //location.reload();
+ 
 
 });
 
+ 
   $("#confirm").click(function(event) {
 
    
     /* get the action attribute from the <form action=""> element */
     
-    url = "http://192.168.0.103:8000/accept/"
+    url = "http://rushikeshk9.pythonanywhere.com/accept/"
 
     var d = window.localStorage;
 
@@ -64,7 +66,7 @@ $("#addid").click(function(event){
    
     /* get the action attribute from the <form action=""> element */
     
-    url = "http://192.168.0.103:8000/reject/"
+    url = "http://rushikeshk9.pythonanywhere.com/reject/"
 
     var d = window.localStorage;
 
