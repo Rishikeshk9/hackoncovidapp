@@ -220,7 +220,7 @@ function updateData()
            success:function(result){
                 d.setItem("IV",result);
                 alert("Symptoms Updated.")
-                location.reload();
+                window.location.replace("index.html");
 
            }
 

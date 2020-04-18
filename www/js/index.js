@@ -139,8 +139,7 @@ if(d.getItem("ID")!=null)
 
         window.setInterval(function(){ 
             map.locate();
-            updateFriend();
-            getRedZones();
+            updateFriend(); 
             }, 10000);
 
             window.setInterval(function(){ 
@@ -290,7 +289,7 @@ if(d.getItem("ID")!=null)
   function getRedZonesCount()
   {
       
-    url2 = "http://rushikeshk9.pythonanywhere.com/redzone/"
+    url2 = "http://rushikeshk9.pythonanywhere.com/redzonecount/"
 
 
     $.ajax({
@@ -298,24 +297,17 @@ if(d.getItem("ID")!=null)
         type:'POST',
         data:{userID: id},
         success:function(result){ 
-            var zoneIv = [];  
+            
             var str_array = result.split(',');
-
-            for(var i = 0; i < str_array.length; i++) {
-            if((i+1)%3==0){ //Third Element
-                zoneIv.push(str_array[i]);                           
-
-            }  
-        }
-
+            
            
-        redCircleMarkers = [];
+            redCircleMarkers = [];
 
-            for(i=0;i<(zoneIv.length);i++){  
+            for(i=0;i<(str_array[0]);i++){  
             var theRedCircleMarker = L.circle([0,0], {
                 color: '#E74C3C',
                 fillColor: '#E74C3C',
-                fillOpacity: 0.05,
+                fillOpacity: str_array[1],
                 radius: 1500,
                 stroke:false
             });
@@ -384,8 +376,7 @@ if(d.getItem("ID")!=null)
 
                     console.log("The lat and long for iter "+ i +" is "+latt+"and  "+lng);
                     
-                    redCircleMarkers[i].setLatLng([latt,lng]);
-                     
+                    redCircleMarkers[i].setLatLng([latt,lng]); 
                     redCircleMarkers[i].addTo(map);
 
                 } 

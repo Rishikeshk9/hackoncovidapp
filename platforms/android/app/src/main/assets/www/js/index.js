@@ -125,18 +125,30 @@ if(d.getItem("ID")!=null)
 { 
     map.locate({setView: true, maxZoom: 16});
 
-updateFriendCount();
+        updateFriendCount();
 
-updateFriend();
-getRedZones();
-setInterval(updateFriendCount(),30000) 
-window.setInterval(function(){ 
-    map.locate();
-    updateFriend();
-    getRedZones();
-     }, 30000);
+        updateFriend(); 
+        
+        getRedZonesCount();
+         
+
+        setInterval(updateFriendCount(),30000); 
+        
+        setInterval(getRedZonesCount(),40000);
+         
+
+        window.setInterval(function(){ 
+            map.locate();
+            updateFriend(); 
+            }, 10000);
+
+            window.setInterval(function(){ 
+    
+                getRedZones();
+                }, 20000);
 }   
 
+   
   function updateFriend()
   {
     var d = window.localStorage;
@@ -236,8 +248,7 @@ window.setInterval(function(){
     //location.reload();
 
     url = "http://rushikeshk9.pythonanywhere.com/friendloc/"
-
-    var d = window.localStorage;
+ 
 
         $.ajax({
             url:url,
@@ -272,48 +283,45 @@ window.setInterval(function(){
 
 
 
-        url2 = "http://rushikeshk9.pythonanywhere.com/redzone/"
-
-
-            $.ajax({
-                url:url2,
-                type:'POST',
-                data:{userID: id},
-                success:function(result){ 
-                    var zoneIv = [];  
-                    var str_array = result.split(',');
-    
-                    for(var i = 0; i < str_array.length; i++) {
-                    if((i+1)%3==0){ //Third Element
-                        zoneIv.push(str_array[i]);                           
-    
-                    }  
-                }
-    
-                   
-                redCircleMarkers = [];
-
-                    for(i=0;i<(zoneIv.length);i++){  
-                    var theRedCircleMarker = L.circle([0,0], {
-                        color: '#E74C3C',
-                        fillColor: '#E74C3C',
-                        fillOpacity: 0.05,
-                        radius: 1500,
-                        stroke:false
-                    });
-                    
-                    
-                    redCircleMarkers.push(theRedCircleMarker);   
-                    console.log(redCircleMarkers.length);
-        
-                        
-        
-                    }
-                }
-            });
     
   }
 
+  function getRedZonesCount()
+  {
+      
+    url2 = "http://rushikeshk9.pythonanywhere.com/redzonecount/"
+
+
+    $.ajax({
+        url:url2,
+        type:'POST',
+        data:{userID: id},
+        success:function(result){ 
+            
+            var str_array = result.split(',');
+            
+           
+            redCircleMarkers = [];
+
+            for(i=0;i<(str_array[0]);i++){  
+            var theRedCircleMarker = L.circle([0,0], {
+                color: '#E74C3C',
+                fillColor: '#E74C3C',
+                fillOpacity: str_array[1],
+                radius: 1500,
+                stroke:false
+            });
+            
+            
+            redCircleMarkers.push(theRedCircleMarker);   
+            console.log(redCircleMarkers.length);
+
+                
+
+            }
+        }
+    });
+  }
   function getRedZones(){
 
 
@@ -360,14 +368,15 @@ window.setInterval(function(){
                 
                 console.log("Lon ID: "+lon);
               
+                console.log("Lat: "+lat);
+                console.log("Lat length of for loop: "+lon.length);
+                  for(i=0;i<(lon.length);i++){
+                    var latt = parseFloat(lat[i]);
+                    var lng = parseFloat(lon[i]);  
 
-                  for(i=0;i<(lat.length-1);i++){
-                    var latt = lat[i];
-                    var lng = lon[i];  
-
+                    console.log("The lat and long for iter "+ i +" is "+latt+"and  "+lng);
                     
-                    redCircleMarkers[i].setLatLng([parseFloat(latt),parseFloat(lng)]);
-                     
+                    redCircleMarkers[i].setLatLng([latt,lng]); 
                     redCircleMarkers[i].addTo(map);
 
                 } 
