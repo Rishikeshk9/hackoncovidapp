@@ -27,6 +27,8 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
+        
+
         this.receivedEvent('deviceready');
 
         navigator.contactsPhoneNumbers.list(function(contacts) {
@@ -42,7 +44,33 @@ var app = {
             console.error(error);
          });
 
-         var permissions = cordova.plugins.permissions;  
+         var Permission = window.plugins.Permission
+ 
+            var permission = 'android.permission.ACCESS_COARSE_LOCATION'
+            
+            Permission.has(permission, function(results) {
+                if (!results[permission]) {
+                    Permission.request(permission, function(results) {
+                        if (result[permission]) {
+                           alert("permission is granted coarse location");
+                        }
+                    }, alert)
+                }
+            }, alert)
+
+            var permission2 = 'android.permission.ACCESS_FINE_LOCATION'
+            
+            Permission.has(permission2, function(results) {
+                if (!results[permission2]) {
+                    Permission.request(permission2, function(results) {
+                        if (result[permission2]) {
+                           alert("permission is granted fine location");
+                        }
+                    }, alert)
+                }
+            }, alert)
+
+         /*var permissions = cordova.plugins.permissions;  
 
          var list = [
             permission.ACCESS_COARSE_LOCATION,
@@ -56,7 +84,7 @@ var app = {
            
           function success( status ) {
             if( !status.hasPermission ) error();
-          } 
+          }*/ 
     },
 
     // Update DOM on a Received Event
@@ -75,11 +103,12 @@ var app = {
 app.initialize();
 var d = window.localStorage;
 if(d.getItem("ID")!=null)
-{
+{   
     document.getElementById("mainForm").style.display = "none";
     document.getElementById("mapid").style.display = "block";
 }
 else{
+     
     document.getElementById("mainForm").style.display = "block";
 document.getElementById("mapid").style.display = "none";
 }
@@ -95,9 +124,6 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: 'pk.eyJ1IjoicmlzaGlrZXNoazkiLCJhIjoiY2s4dWFtMzhkMDJvYTNtcDM2dnI1ZWxoNSJ9.iDACWKNRrGfnRlw93f9cEQ'
 }).addTo(map);
 
-
-map.on('locationfound', onLocationFound);
-map.on('locationerror', onLocationError);
 
 var iv = parseFloat(d.getItem("IV"));
  
@@ -139,13 +165,15 @@ var theGreencircle =  L.circle([0,0], {
 var myLat;
 var myLon;
 
+
 if(d.getItem("ID")!=null)
 { 
     map.locate({setView: true, maxZoom: 16});
-
+    map.on('locationfound', onLocationFound);
+    map.on('locationerror', onLocationError);
+    
         updateFriendCount();
-
-        updateFriend(); 
+ 
         
         getRedZonesCount();
          
@@ -157,12 +185,12 @@ if(d.getItem("ID")!=null)
 
         window.setInterval(function(){ 
             map.locate();
-            updateFriend(); 
-            }, 10000);
+            updateFriend();            }, 10000);
 
             window.setInterval(function(){ 
     
-                getRedZones();
+                
+            getRedZones(); 
                 }, 20000);
 }   
 
@@ -410,9 +438,13 @@ function onLocationFound(e) {
     var radiuss = e.accuracy / 2;
     myLat = e.latlng.lat;
     myLon = e.latlng.lng; 
-    
+
   
-    iv = parseFloat(d.getItem("IV"));
+  
+    iv = parseFloat(d.getItem("IV"));   
+ if(iv==NaN||iv==""||iv==null){
+     iv = 0;
+ }
     if(iv>=0.8){
         themarker.setIcon(redIcon);
 
@@ -420,9 +452,8 @@ function onLocationFound(e) {
 
         themarker.bindPopup("You seem to be Positive. Location Accuracy " + radiuss + " meters" );    
         theRedcircle.setLatLng(e.latlng);
-        theRedcircle.setRadius(radiuss);
+        theRedcircle.setRadius(radiuss); 
          
-
     
     }
      
@@ -436,7 +467,7 @@ function onLocationFound(e) {
                 
             theorangecircle.setLatLng(e.latlng);
             theorangecircle.setRadius(radiuss);
-    
+     
         }
     }
     if(iv<0.37){
@@ -448,7 +479,8 @@ function onLocationFound(e) {
  
         theGreencircle.setLatLng(e.latlng);
             theGreencircle.setRadius(radiuss);
-    
+
+     
     }
 
    
@@ -603,7 +635,7 @@ function upload(e){
         },
         error: function(){
             console.log(data);
-            alert('There was an error adding your Location');
+            
         }
     });
  
@@ -701,7 +733,7 @@ $("#mainForm").submit(function(event) {
                d.setItem("IV",str_array[0]);
                d.setItem("ID",str_array[1]);
 
-                  alert(result);
+                  alert("Your Infection Variable is"+str_array[0]);
                  location.reload();
 
             }

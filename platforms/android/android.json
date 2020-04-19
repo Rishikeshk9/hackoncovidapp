@@ -33,11 +33,15 @@
               "count": 1
             },
             {
-              "xml": "<feature name=\"ContactsPhoneNumbers\"><param name=\"android-package\" value=\"com.dbaq.cordova.contactsPhoneNumbers.ContactsManager\" /></feature>",
+              "xml": "<feature name=\"Permissions\"><param name=\"android-package\" value=\"com.android.plugins.Permissions\" /></feature>",
               "count": 1
             },
             {
-              "xml": "<feature name=\"Permissions\"><param name=\"android-package\" value=\"com.android.plugins.Permissions\" /></feature>",
+              "xml": "<feature name=\"Permission\"><param name=\"android-package\" value=\"com.adrianodigiovanni.permission.CDVPermission\" /></feature>",
+              "count": 1
+            },
+            {
+              "xml": "<feature name=\"Geolocation\"><param name=\"android-package\" value=\"org.apache.cordova.geolocation.Geolocation\" /></feature>",
               "count": 1
             }
           ]
@@ -51,7 +55,15 @@
               "count": 3
             },
             {
-              "xml": "<uses-permission android:name=\"android.permission.READ_CONTACTS\" />",
+              "xml": "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />",
+              "count": 1
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />",
+              "count": 1
+            },
+            {
+              "xml": "<uses-feature android:name=\"android.hardware.location.gps\" />",
               "count": 1
             }
           ],
@@ -73,7 +85,7 @@
               "plugin": "cordova-plugin-cleartext",
               "oldAttrib": {
                 "android:hardwareAccelerated": "true",
-                "android:icon": "@mipmap/ic_launcher",
+                "android:icon": "@drawable/logo",
                 "android:label": "@string/app_name",
                 "android:supportsRtl": "true",
                 "android:usesCleartextTraffic": "true"
@@ -101,10 +113,13 @@
     "cordova-plugin-cleartext": {
       "PACKAGE_NAME": "com.rushikesh9.hackon"
     },
-    "cordova-plugin-contacts-phonenumbers": {
+    "cordova-plugin-android-permissions": {
       "PACKAGE_NAME": "com.rushikesh99.hackon"
     },
-    "cordova-plugin-android-permissions": {
+    "cordova-plugin-permission": {
+      "PACKAGE_NAME": "com.rushikesh99.hackon"
+    },
+    "cordova-plugin-geolocation": {
       "PACKAGE_NAME": "com.rushikesh99.hackon"
     }
   },
@@ -340,20 +355,39 @@
       ]
     },
     {
-      "id": "cordova-plugin-contacts-phonenumbers.contactsPhoneNumbers",
-      "file": "plugins/cordova-plugin-contacts-phonenumbers/www/contactsPhoneNumbers.js",
-      "pluginId": "cordova-plugin-contacts-phonenumbers",
-      "clobbers": [
-        "navigator.contactsPhoneNumbers"
-      ]
-    },
-    {
       "id": "cordova-plugin-android-permissions.Permissions",
       "file": "plugins/cordova-plugin-android-permissions/www/permissions.js",
       "pluginId": "cordova-plugin-android-permissions",
       "clobbers": [
         "cordova.plugins.permissions"
       ]
+    },
+    {
+      "id": "cordova-plugin-permission.Permission",
+      "file": "plugins/cordova-plugin-permission/www/index.js",
+      "pluginId": "cordova-plugin-permission",
+      "clobbers": [
+        "window.plugins.Permission"
+      ]
+    },
+    {
+      "id": "cordova-plugin-permission.tests",
+      "file": "plugins/cordova-plugin-permission/tests/index.spec.js",
+      "pluginId": "cordova-plugin-permission"
+    },
+    {
+      "id": "cordova-plugin-geolocation.geolocation",
+      "file": "plugins/cordova-plugin-geolocation/www/android/geolocation.js",
+      "pluginId": "cordova-plugin-geolocation",
+      "clobbers": [
+        "navigator.geolocation"
+      ]
+    },
+    {
+      "id": "cordova-plugin-geolocation.PositionError",
+      "file": "plugins/cordova-plugin-geolocation/www/PositionError.js",
+      "pluginId": "cordova-plugin-geolocation",
+      "runs": true
     }
   ],
   "plugin_metadata": {
@@ -362,7 +396,8 @@
     "cordova-plugin-file-transfer": "1.7.1",
     "cordova-plugin-camera": "4.1.0",
     "cordova-plugin-cleartext": "1.0.0",
-    "cordova-plugin-contacts-phonenumbers": "0.0.12",
-    "cordova-plugin-android-permissions": "1.0.2"
+    "cordova-plugin-android-permissions": "1.0.2",
+    "cordova-plugin-permission": "0.1.0",
+    "cordova-plugin-geolocation": "4.0.2"
   }
 }

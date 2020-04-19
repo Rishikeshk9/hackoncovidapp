@@ -61,6 +61,7 @@
   $(document).ready(function(){
     
     var d = window.localStorage;
+    document.getElementById("userID2").value=d.getItem("ID");
     document.getElementById("userID").value=d.getItem("ID");
     url = "http://rushikeshk9.pythonanywhere.com/notify/"
     var id1 = d.getItem("ID");
@@ -147,13 +148,16 @@
                         <input type="text" class="form-control" name="friendID" id="friendID" placeholder="Friend's ID">
                         </div>
                         <div class="form-group mx-sm-3 mb-2">
-                            <label for="inputPassword2" class="sr-only">My's ID</label>
-                            <input type="text" class="form-control" name="userID" id="userID" placeholder="My ID">
+                          <label for="userIDText"  >Your ID : </label>
+
+                          <input type="text" readonly disabled class="form-control"  name="userID2" id="userID2" placeholder="My ID">
+
+                            <input type="text" class="form-control" style="opacity: 0;" name="userID" id="userID" placeholder="My ID">
                         </div>
-                        <button type="submit" class="btn btn-primary mb-2">Add</button>
+                        <button type="submit" class="btn btn-primary mb-2">Send Friend Request</button>
                     </form>
 
-                    <button  id="addid" class="btn btn-primary mb-2">Add User ID</button>
+                    <button style="opacity: 0"  id="addid" class="btn btn-primary mb-2">Add User ID</button>
 
                     <table class="table table-bordered" id="frndsTable">
                       <thead>
@@ -173,7 +177,6 @@
         <a href="index.html" class="float"> 
           <i class="fas fa-map-marked-alt my-float m-3" style="font-size: 25px;"></i>
           </a>
-        <script type="text/javascript" src="cordova.js"></script>
 
         <!-- JQuery -->
          <!-- include the jQuery and jQuery UI scripts -->

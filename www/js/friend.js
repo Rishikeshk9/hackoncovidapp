@@ -5,14 +5,13 @@ $("#friendForm").submit(function(event) {
     event.preventDefault(); 
     var d = window.localStorage;
     var id;
-    id = document.getElementById("userID").value;
+    id = document.getElementById("userID2").value; 
     d.setItem("ID",id);
    
 
     /* get the action attribute from the <form action=""> element */
     var $form = $( this ),
         url = $form.attr( 'action' );
-
   
         $.ajax({
             url:url,

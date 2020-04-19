@@ -23,10 +23,13 @@
     "cordova-plugin-cleartext": {
       "PACKAGE_NAME": "com.rushikesh9.hackon"
     },
-    "cordova-plugin-contacts-phonenumbers": {
+    "cordova-plugin-android-permissions": {
       "PACKAGE_NAME": "com.rushikesh99.hackon"
     },
-    "cordova-plugin-android-permissions": {
+    "cordova-plugin-permission": {
+      "PACKAGE_NAME": "com.rushikesh99.hackon"
+    },
+    "cordova-plugin-geolocation": {
       "PACKAGE_NAME": "com.rushikesh99.hackon"
     }
   },
