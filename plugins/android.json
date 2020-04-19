@@ -25,6 +25,9 @@
     },
     "cordova-plugin-contacts-phonenumbers": {
       "PACKAGE_NAME": "com.rushikesh99.hackon"
+    },
+    "cordova-plugin-android-permissions": {
+      "PACKAGE_NAME": "com.rushikesh99.hackon"
     }
   },
   "dependent_plugins": {}

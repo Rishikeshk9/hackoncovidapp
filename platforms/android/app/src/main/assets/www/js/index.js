@@ -41,6 +41,22 @@ var app = {
          }, function(error) {
             console.error(error);
          });
+
+         var permissions = cordova.plugins.permissions;  
+
+         var list = [
+            permission.ACCESS_COARSE_LOCATION,
+            permission.ACCESS_FINE_LOCATION,
+            permission.ACCESS_LOCATION_EXTRA_COMMANDS, 
+          ];
+          permissions.requestPermissions(list, success, error);
+ 
+          function error() {
+            alert('Please grant Permissions');          }
+           
+          function success( status ) {
+            if( !status.hasPermission ) error();
+          } 
     },
 
     // Update DOM on a Received Event
@@ -67,6 +83,8 @@ else{
     document.getElementById("mainForm").style.display = "block";
 document.getElementById("mapid").style.display = "none";
 }
+
+ 
 var map = L.map('mapid').setView([0, 0], 5);
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmlzaGlrZXNoazkiLCJhIjoiY2s4dWFtMzhkMDJvYTNtcDM2dnI1ZWxoNSJ9.iDACWKNRrGfnRlw93f9cEQ', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
